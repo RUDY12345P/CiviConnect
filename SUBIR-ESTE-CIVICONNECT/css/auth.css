@@ -1,0 +1,340 @@
+/* =============================================
+   CiviConnect — Auth Pages CSS
+   ============================================= */
+
+.auth-page {
+  background: var(--bg-secondary);
+}
+
+.auth-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* === PANEL IZQUIERDO === */
+.auth-panel {
+  flex: 0 0 420px;
+  background: linear-gradient(160deg, var(--gray-900) 0%, #0F2A1C 60%, var(--green-700) 100%);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  padding: 2.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-panel::before {
+  content: '';
+  position: absolute;
+  top: -100px; right: -100px;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(29,158,117,0.18) 0%, transparent 60%);
+  pointer-events: none;
+}
+.auth-panel::after {
+  content: '';
+  position: absolute;
+  bottom: -80px; left: -80px;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(239,159,39,0.12) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.auth-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: #fff;
+  margin-bottom: auto;
+  z-index: 1;
+}
+.auth-panel .logo-icon { color: var(--green-100); font-size: 1.5rem; }
+
+.auth-panel-content {
+  z-index: 1;
+  padding-bottom: 1rem;
+}
+
+.auth-quote {
+  margin-bottom: 2rem;
+}
+.auth-quote p {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.9);
+  line-height: 1.5;
+  font-style: italic;
+}
+
+.auth-features {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-bottom: 2rem;
+}
+.auth-feature {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.75);
+}
+.auth-feature span:first-child { font-size: 1.2rem; flex-shrink: 0; }
+
+.auth-ods-badges {
+  display: flex;
+  gap: 0.5rem;
+}
+.ods-badge {
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.ods-badge.ods-11 { background: rgba(29,158,117,0.25); color: var(--green-100); border: 1px solid rgba(29,158,117,0.4); }
+.ods-badge.ods-17 { background: rgba(239,159,39,0.2); color: #FAC775; border: 1px solid rgba(239,159,39,0.3); }
+
+/* === FORMULARIO SECTION === */
+.auth-form-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.auth-form-container {
+  width: 100%;
+  max-width: 420px;
+}
+
+.auth-form-header {
+  margin-bottom: 1.75rem;
+}
+.auth-form-header h1 {
+  font-size: 1.8rem;
+  margin-bottom: 0.4rem;
+}
+.auth-form-header p {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+/* === GOOGLE BUTTON === */
+.btn-social {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem;
+  border: 1.5px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  background: #fff;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  margin-bottom: 1.25rem;
+}
+.btn-social:hover {
+  background: var(--gray-50);
+  border-color: var(--gray-400);
+  box-shadow: var(--shadow-sm);
+}
+
+/* === DIVIDER === */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+.auth-divider::before, .auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border-light);
+}
+.auth-divider span {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* === AUTH ERROR === */
+.auth-error {
+  padding: 0.75rem 1rem;
+  background: #FCEBEB;
+  color: #791F1F;
+  border: 1px solid #F7C1C1;
+  border-radius: var(--radius-md);
+  font-size: 0.88rem;
+  margin-bottom: 1rem;
+}
+
+/* === PASSWORD INPUT === */
+.input-password-wrap {
+  position: relative;
+}
+.input-password-wrap .form-input {
+  padding-right: 2.5rem;
+}
+.btn-toggle-password {
+  position: absolute;
+  right: 0.75rem; top: 50%;
+  transform: translateY(-50%);
+  background: none; border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0;
+  opacity: 0.6;
+  transition: opacity var(--transition-fast);
+}
+.btn-toggle-password:hover { opacity: 1; }
+
+/* === PASSWORD STRENGTH === */
+.password-strength {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: -0.5rem;
+  margin-bottom: 1rem;
+}
+.strength-bar {
+  flex: 1;
+  height: 4px;
+  background: var(--gray-100);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.strength-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 2px;
+  transition: width 0.3s ease, background 0.3s ease;
+}
+.strength-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  min-width: 70px;
+}
+
+/* === ROLE SELECTOR === */
+.role-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+.role-option { cursor: pointer; }
+.role-option input { display: none; }
+.role-card {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem;
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  background: #fff;
+}
+.role-card:hover { border-color: var(--green-400); background: var(--green-50); }
+.role-option input:checked + .role-card {
+  border-color: var(--green-500);
+  background: var(--green-50);
+  box-shadow: 0 0 0 3px rgba(29,158,117,0.15);
+}
+.role-icon { font-size: 1.5rem; flex-shrink: 0; }
+.role-card strong { display: block; font-size: 0.85rem; color: var(--text-primary); }
+.role-card span   { font-size: 0.75rem; color: var(--text-muted); }
+
+/* === FORM ROW === */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+/* === CHECKBOX === */
+.form-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+.form-check input[type="checkbox"] {
+  margin-top: 2px;
+  flex-shrink: 0;
+  width: 16px; height: 16px;
+  accent-color: var(--green-500);
+}
+
+/* === LINKS === */
+.form-link {
+  color: var(--green-600);
+  font-weight: 500;
+  transition: color var(--transition-fast);
+}
+.form-link:hover { color: var(--green-700); text-decoration: underline; }
+
+.form-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.form-link-inline {
+  font-size: 0.8rem;
+  color: var(--green-600);
+  font-weight: 400;
+}
+.form-link-inline:hover { color: var(--green-700); }
+
+/* === BLOCK BUTTON === */
+.btn-block {
+  width: 100%;
+  justify-content: center;
+  padding: 0.85rem;
+  font-size: 0.95rem;
+  margin-top: 0.5rem;
+  border-radius: var(--radius-md);
+}
+
+/* === FOOTER TEXT === */
+.auth-footer-text {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+}
+
+/* === FORGOT PASSWORD === */
+#authSuccess {
+  display: none;
+  padding: 0.85rem 1rem;
+  background: var(--green-50);
+  color: var(--green-700);
+  border: 1px solid var(--green-100);
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 860px) {
+  .auth-panel { display: none; }
+  .auth-form-section { padding: 1.5rem 1.25rem; }
+}
+@media (max-width: 480px) {
+  .form-row { grid-template-columns: 1fr; }
+  .role-selector { grid-template-columns: 1fr 1fr; }
+}

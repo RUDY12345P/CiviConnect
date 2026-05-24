@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mapa de eventos — CiviConnect</title>
+  <link rel="stylesheet" href="../css/main.css" />
+  <link rel="stylesheet" href="../css/app.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <!-- Leaflet.js para el mapa real -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+</head>
+<body>
+
+  <nav class="navbar scrolled">
+    <div class="nav-container">
+      <a href="../index.html" class="nav-logo"><span class="logo-icon">◎</span> CiviConnect</a>
+      <ul class="nav-links">
+        <li><a href="events.html">Eventos</a></li>
+        <li><a href="map.html" class="active">Mapa</a></li>
+        <li><a href="calendar.html">Calendario</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="dashboard.html" class="btn-ghost">Mi panel</a>
+      </div>
+    </div>
+  </nav>
+
+  <div style="padding-top:60px;height:100vh;display:flex;flex-direction:column;">
+
+    <!-- BARRA SUPERIOR -->
+    <div style="background:#fff;border-bottom:1px solid var(--border-light);padding:0.85rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;flex-shrink:0;">
+      <div>
+        <strong style="font-size:1rem;">📍 Mapa de eventos</strong>
+        <span style="font-size:0.82rem;color:var(--text-muted);margin-left:0.5rem;" id="mapCount"></span>
+      </div>
+      <div style="margin-left:auto;display:flex;gap:0.5rem;flex-wrap:wrap;">
+        <button class="map-filter-btn active" data-cat="all">Todos</button>
+        <button class="map-filter-btn" data-cat="voluntariado">🌱 Voluntariado</button>
+        <button class="map-filter-btn" data-cat="medioambiente">♻️ Ambiente</button>
+        <button class="map-filter-btn" data-cat="educacion">📚 Educación</button>
+        <button class="map-filter-btn" data-cat="salud">❤️ Salud</button>
+        <button class="map-filter-btn" data-cat="cultura">🎨 Cultura</button>
+      </div>
+    </div>
+
+    <!-- MAPA + LISTA -->
+    <div style="display:flex;flex:1;overflow:hidden;">
+
+      <!-- MAPA -->
+      <div id="map" style="flex:1;z-index:0;"></div>
+
+      <!-- LISTA LATERAL -->
+      <div style="width:300px;overflow-y:auto;background:#fff;border-left:1px solid var(--border-light);flex-shrink:0;" id="mapList">
+        <div style="padding:1rem;border-bottom:1px solid var(--border-light);">
+          <strong style="font-size:0.85rem;">Eventos en el mapa</strong>
+        </div>
+        <div id="mapEventList" style="padding:0.75rem;"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script src="../js/main.js"></script>
+  <script type="module">
+    import { SAMPLE_EVENTS } from '../js/events.js';
+
+    const CAT_COLORS = {
+      voluntariado: '#1D9E75', medioambiente: '#0F6E56',
+      educacion: '#378ADD',   salud: '#E24B4A',
+      cultura: '#7F77DD',     derechos: '#EF9F27'
+    };
+
+    // Inicializar mapa con Leaflet (OpenStreetMap)
+    const map = L.map('map', { zoomControl: true }).setView([19.4326, -99.1332], 12);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      maxZoom: 18,
+    }).addTo(map);
+
+    let markers = [];
+    let currentCat = 'all';
+
+    function createMarkerIcon(color, emoji) {
+      return L.divIcon({
+        html: `<div style="
+          background:${color};
+          width:36px;height:36px;
+          border-radius:50% 50% 50% 0;
+          transform:rotate(-45deg);
+          display:flex;align-items:center;justify-content:center;
+          box-shadow:0 2px 8px rgba(0,0,0,0.25);
+          border:2px solid #fff;
+        "><span style="transform:rotate(45deg);font-size:14px;">${emoji}</span></div>`,
+        iconSize: [36, 36],
+        iconAnchor: [18, 36],
+        popupAnchor: [0, -36],
+        className: ''
+      });
+    }
+
+    function renderMarkers() {
+      // Limpiar marcadores previos
+      markers.forEach(m => map.removeLayer(m));
+      markers = [];
+
+      const toShow = currentCat === 'all'
+        ? SAMPLE_EVENTS
+        : SAMPLE_EVENTS.filter(ev => ev.category === currentCat);
+
+      document.getElementById('mapCount').textContent = `${toShow.length} evento${toShow.length !== 1 ? 's' : ''}`;
+
+      toShow.forEach(ev => {
+        if (!ev.lat || !ev.lng) return;
+        const color  = CAT_COLORS[ev.category] || '#1D9E75';
+        const icon   = createMarkerIcon(color, ev.image);
+        const marker = L.marker([ev.lat, ev.lng], { icon });
+
+        const pct = Math.round((ev.enrolled / ev.maxCapacity) * 100);
+        marker.bindPopup(`
+          <div style="font-family:'DM Sans',sans-serif;min-width:220px;">
+            <div style="font-size:1.5rem;text-align:center;margin-bottom:0.5rem;">${ev.image}</div>
+            <strong style="font-size:0.95rem;display:block;margin-bottom:0.3rem;">${ev.title}</strong>
+            <p style="font-size:0.8rem;color:#666;margin:0 0 0.5rem;">📅 ${ev.date} · ${ev.time || ''}</p>
+            <p style="font-size:0.8rem;color:#666;margin:0 0 0.5rem;">📍 ${ev.location}</p>
+            <div style="background:#f5f5f5;border-radius:4px;height:4px;margin-bottom:0.5rem;overflow:hidden;">
+              <div style="background:${color};height:100%;width:${pct}%;border-radius:4px;"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:0.78rem;color:#888;margin-bottom:0.75rem;">
+              <span>${ev.enrolled}/${ev.maxCapacity} inscritos</span>
+              <span>⭐ ${ev.points} pts</span>
+            </div>
+            <a href="events.html" style="display:block;text-align:center;background:${color};color:#fff;padding:0.4rem;border-radius:6px;font-size:0.85rem;text-decoration:none;font-weight:500;">Inscribirme</a>
+          </div>
+        `);
+
+        marker.addTo(map);
+        markers.push(marker);
+
+        // Highlight en lista al hacer click en marcador
+        marker.on('click', () => {
+          document.querySelectorAll('.map-list-item').forEach(el => el.classList.remove('active-item'));
+          document.getElementById(`map-item-${ev.id}`)?.classList.add('active-item');
+          document.getElementById(`map-item-${ev.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        });
+      });
+
+      renderList(toShow);
+    }
+
+    function renderList(events) {
+      const listEl = document.getElementById('mapEventList');
+      listEl.innerHTML = events.map(ev => {
+        const color = CAT_COLORS[ev.category] || '#1D9E75';
+        return `
+          <div class="map-list-item" id="map-item-${ev.id}"
+            style="display:flex;align-items:flex-start;gap:0.6rem;padding:0.75rem;border-radius:var(--radius-md);margin-bottom:0.4rem;cursor:pointer;transition:background 0.15s;"
+            onmouseover="this.style.background='var(--gray-50)'"
+            onmouseout="this.style.background='transparent'"
+            onclick="flyToEvent('${ev.id}')">
+            <div style="width:8px;height:8px;border-radius:50%;background:${color};flex-shrink:0;margin-top:5px;"></div>
+            <div style="flex:1;min-width:0;">
+              <strong style="font-size:0.85rem;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${ev.title}</strong>
+              <span style="font-size:0.76rem;color:var(--text-muted);">📅 ${ev.date}</span><br/>
+              <span style="font-size:0.76rem;color:var(--text-muted);">👥 ${ev.enrolled}/${ev.maxCapacity}</span>
+            </div>
+          </div>`;
+      }).join('');
+
+      if (!events.length) {
+        listEl.innerHTML = `<p style="text-align:center;color:var(--text-muted);font-size:0.88rem;padding:2rem 0;">Sin eventos en esta categoría</p>`;
+      }
+    }
+
+    // Click en lista → volar al marcador
+    window.flyToEvent = function(id) {
+      const ev = SAMPLE_EVENTS.find(e => e.id === id);
+      if (ev?.lat && ev?.lng) {
+        map.flyTo([ev.lat, ev.lng], 15, { duration: 1.2 });
+        const marker = markers.find(m => m.getLatLng().lat === ev.lat);
+        if (marker) marker.openPopup();
+      }
+    };
+
+    // Filtros de categoría
+    document.querySelectorAll('.map-filter-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.map-filter-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        currentCat = this.dataset.cat;
+        renderMarkers();
+      });
+    });
+
+    // CSS botones filtro
+    const style = document.createElement('style');
+    style.textContent = `
+      .map-filter-btn {
+        padding:0.3rem 0.75rem;
+        border:1.5px solid var(--border-light);
+        border-radius:var(--radius-full);
+        background:#fff; cursor:pointer;
+        font-family:var(--font-body); font-size:0.82rem;
+        color:var(--text-secondary);
+        transition:all 0.15s ease;
+      }
+      .map-filter-btn:hover { border-color:var(--green-400); color:var(--green-600); }
+      .map-filter-btn.active { background:var(--green-500); color:#fff; border-color:var(--green-500); }
+      .active-item { background:var(--green-50) !important; }
+      @media (max-width:700px) {
+        #mapList { display:none; }
+      }
+    `;
+    document.head.appendChild(style);
+
+    renderMarkers();
+  </script>
+</body>
+</html>

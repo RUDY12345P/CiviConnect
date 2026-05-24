@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel organizador — CiviConnect</title>
+  <link rel="stylesheet" href="../css/main.css" />
+  <link rel="stylesheet" href="../css/app.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <nav class="navbar scrolled">
+    <div class="nav-container">
+      <a href="../index.html" class="nav-logo"><span class="logo-icon">◎</span> CiviConnect</a>
+      <ul class="nav-links">
+        <li><a href="events.html">Eventos</a></li>
+        <li><a href="dashboard.html">Mi panel</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button onclick="logoutUser()" class="btn-ghost">Cerrar sesión</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="app-shell">
+    <aside class="sidebar">
+      <nav class="sidebar-nav">
+        <div class="sidebar-section-label">Organizador</div>
+        <a href="organizer.html" class="sidebar-item active"><span class="sidebar-icon">🧑‍💼</span> Mis eventos</a>
+        <a href="create-event.html" class="sidebar-item"><span class="sidebar-icon">➕</span> Crear evento</a>
+        <div class="sidebar-section-label">Ciudadano</div>
+        <a href="dashboard.html" class="sidebar-item"><span class="sidebar-icon">📊</span> Mi panel</a>
+        <a href="events.html" class="sidebar-item"><span class="sidebar-icon">🗺️</span> Explorar eventos</a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:1rem;">
+        <div>
+          <h1 style="font-size:1.6rem;margin-bottom:0.2rem;">Panel de organizador</h1>
+          <p style="color:var(--text-muted);margin:0;">Gestiona tus eventos y monitorea la participación</p>
+        </div>
+        <a href="create-event.html" class="btn-primary">➕ Crear nuevo evento</a>
+      </div>
+
+      <!-- STATS ORGANIZADOR -->
+      <div class="stats-row" style="margin-bottom:2rem;">
+        <div class="stat-card stat-card-accent">
+          <span class="stat-card-icon">📋</span>
+          <span class="stat-card-value" id="orgTotal">8</span>
+          <span class="stat-card-label">Eventos creados</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-card-icon">👥</span>
+          <span class="stat-card-value" id="orgParticipants">576</span>
+          <span class="stat-card-label">Participantes totales</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-card-icon">✅</span>
+          <span class="stat-card-value" id="orgActive">6</span>
+          <span class="stat-card-label">Eventos activos</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-card-icon">🌟</span>
+          <span class="stat-card-value">4.8</span>
+          <span class="stat-card-label">Valoración promedio</span>
+        </div>
+      </div>
+
+      <!-- TABLA DE EVENTOS -->
+      <div class="dashboard-section">
+        <div class="dashboard-section-header">
+          <h2>📋 Mis eventos</h2>
+          <div style="display:flex;gap:0.5rem;align-items:center;">
+            <select class="form-select" id="filterStatus" style="font-size:0.85rem;padding:0.35rem 0.7rem;">
+              <option value="all">Todos</option>
+              <option value="active">Activos</option>
+              <option value="past">Pasados</option>
+            </select>
+          </div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="org-events-table" id="orgTable">
+            <thead>
+              <tr>
+                <th>Evento</th>
+                <th>Categoría</th>
+                <th>Fecha</th>
+                <th>Inscritos</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="orgTableBody">
+              <!-- Se llena con JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- MODAL EDITAR EVENTO -->
+  <div class="modal-overlay" id="editModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>✏️ Editar evento</h2>
+        <button class="modal-close" id="closeEditModal">✕</button>
+      </div>
+      <form id="editEventForm">
+        <input type="hidden" id="editEventId" />
+        <div class="form-group">
+          <label class="form-label">Título del evento</label>
+          <input class="form-input" type="text" id="editTitle" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Descripción</label>
+          <textarea class="form-textarea" id="editDesc" rows="3"></textarea>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+          <div class="form-group">
+            <label class="form-label">Fecha</label>
+            <input class="form-input" type="date" id="editDate" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Hora</label>
+            <input class="form-input" type="time" id="editTime" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Lugar</label>
+          <input class="form-input" type="text" id="editLocation" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Capacidad máxima</label>
+          <input class="form-input" type="number" id="editCapacity" min="1" />
+        </div>
+        <div style="display:flex;gap:0.75rem;justify-content:flex-end;padding-top:1rem;border-top:1px solid var(--border-light);">
+          <button type="button" class="btn-ghost" id="cancelEdit">Cancelar</button>
+          <button type="submit" class="btn-primary">Guardar cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL CONFIRMAR ELIMINAR -->
+  <div class="modal-overlay" id="deleteModal">
+    <div class="modal" style="max-width:380px;text-align:center;">
+      <div style="font-size:3rem;margin-bottom:1rem;">🗑️</div>
+      <h2 style="margin-bottom:0.5rem;">¿Eliminar evento?</h2>
+      <p style="margin-bottom:1.5rem;">Esta acción no se puede deshacer. Se perderán todos los datos del evento e inscripciones.</p>
+      <div style="display:flex;gap:0.75rem;justify-content:center;">
+        <button class="btn-ghost" id="cancelDelete">Cancelar</button>
+        <button class="btn-danger" id="confirmDelete" style="padding:0.65rem 1.4rem;font-size:0.95rem;">Sí, eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/main.js"></script>
+  <script type="module">
+    import { SAMPLE_EVENTS, updateEvent, deleteEvent } from '../js/events.js';
+
+    let orgEvents = [...SAMPLE_EVENTS];
+    let deleteTarget = null;
+    let filterVal = 'all';
+
+    const tbody      = document.getElementById('orgTableBody');
+    const editModal  = document.getElementById('editModal');
+    const delModal   = document.getElementById('deleteModal');
+
+    function today() { return new Date().toISOString().split('T')[0]; }
+
+    function renderTable() {
+      const toShow = orgEvents.filter(ev => {
+        const isPast = ev.date < today();
+        if (filterVal === 'active') return !isPast;
+        if (filterVal === 'past')   return isPast;
+        return true;
+      });
+
+      tbody.innerHTML = toShow.map(ev => {
+        const isPast = ev.date < today();
+        const pct    = Math.round((ev.enrolled / ev.maxCapacity) * 100);
+        const statusClass = isPast ? 'status-past' : 'status-active';
+        const statusTxt   = isPast ? 'Finalizado' : 'Activo';
+        const catMap = { voluntariado:'🌱', medioambiente:'♻️', educacion:'📚', salud:'❤️', cultura:'🎨', derechos:'⚖️' };
+        return `
+          <tr>
+            <td>
+              <div style="display:flex;align-items:center;gap:0.6rem;">
+                <span style="font-size:1.3rem;">${ev.image}</span>
+                <div>
+                  <strong style="font-size:0.9rem;">${ev.title}</strong>
+                  <div style="font-size:0.78rem;color:var(--text-muted);">${ev.organizer}</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="badge badge-green">${catMap[ev.category] || '📅'} ${ev.category}</span></td>
+            <td style="font-size:0.85rem;color:var(--text-secondary);">${ev.date}<br/>${ev.time || ''}</td>
+            <td>
+              <div style="font-size:0.85rem;">${ev.enrolled}/${ev.maxCapacity}</div>
+              <div class="capacity-bar" style="width:80px;margin-top:4px;">
+                <div class="capacity-fill" style="width:${pct}%"></div>
+              </div>
+            </td>
+            <td><span class="badge ${statusClass}">${statusTxt}</span></td>
+            <td>
+              <div class="table-actions">
+                <button class="btn-edit" onclick="openEdit('${ev.id}')">✏️ Editar</button>
+                <button class="btn-danger" onclick="openDelete('${ev.id}')">🗑️</button>
+              </div>
+            </td>
+          </tr>`;
+      }).join('');
+
+      if (!toShow.length) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text-muted);">No hay eventos con ese filtro</td></tr>`;
+      }
+    }
+
+    // Filtro estado
+    document.getElementById('filterStatus').addEventListener('change', (e) => {
+      filterVal = e.target.value;
+      renderTable();
+    });
+
+    // EDITAR
+    window.openEdit = function(id) {
+      const ev = orgEvents.find(e => e.id === id);
+      if (!ev) return;
+      document.getElementById('editEventId').value   = id;
+      document.getElementById('editTitle').value     = ev.title;
+      document.getElementById('editDesc').value      = ev.description;
+      document.getElementById('editDate').value      = ev.date;
+      document.getElementById('editTime').value      = ev.time || '';
+      document.getElementById('editLocation').value  = ev.location;
+      document.getElementById('editCapacity').value  = ev.maxCapacity;
+      editModal.classList.add('open');
+    };
+
+    document.getElementById('editEventForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('editEventId').value;
+      const updates = {
+        title:       document.getElementById('editTitle').value,
+        description: document.getElementById('editDesc').value,
+        date:        document.getElementById('editDate').value,
+        time:        document.getElementById('editTime').value,
+        location:    document.getElementById('editLocation').value,
+        maxCapacity: parseInt(document.getElementById('editCapacity').value),
+      };
+      await updateEvent(id, updates);
+      // Actualizar local
+      const idx = orgEvents.findIndex(e => e.id === id);
+      if (idx !== -1) Object.assign(orgEvents[idx], updates);
+      editModal.classList.remove('open');
+      renderTable();
+      showToast('Evento actualizado correctamente ✅', 'success');
+    });
+
+    document.getElementById('closeEditModal').addEventListener('click', () => editModal.classList.remove('open'));
+    document.getElementById('cancelEdit').addEventListener('click',     () => editModal.classList.remove('open'));
+
+    // ELIMINAR
+    window.openDelete = function(id) {
+      deleteTarget = id;
+      delModal.classList.add('open');
+    };
+    document.getElementById('cancelDelete').addEventListener('click',  () => delModal.classList.remove('open'));
+    document.getElementById('confirmDelete').addEventListener('click', async () => {
+      if (!deleteTarget) return;
+      await deleteEvent(deleteTarget);
+      orgEvents = orgEvents.filter(e => e.id !== deleteTarget);
+      delModal.classList.remove('open');
+      renderTable();
+      showToast('Evento eliminado', 'info');
+      // Actualizar estadísticas
+      document.getElementById('orgTotal').textContent  = orgEvents.length;
+      document.getElementById('orgActive').textContent = orgEvents.filter(e => e.date >= today()).length;
+    });
+
+    // Cerrar modales al click fuera
+    [editModal, delModal].forEach(m => {
+      m.addEventListener('click', (e) => { if (e.target === m) m.classList.remove('open'); });
+    });
+
+    window.logoutUser = async function() {
+      try {
+        const { getAuth, signOut } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js");
+        await signOut(getAuth());
+      } catch(_) {}
+      window.location.href = '../index.html';
+    };
+
+    renderTable();
+  </script>
+</body>
+</html>
