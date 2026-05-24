@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calendario — CiviConnect</title>
+  <link rel="stylesheet" href="../css/main.css" />
+  <link rel="stylesheet" href="../css/app.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <nav class="navbar scrolled">
+    <div class="nav-container">
+      <a href="../index.html" class="nav-logo"><span class="logo-icon">◎</span> CiviConnect</a>
+      <ul class="nav-links">
+        <li><a href="events.html">Eventos</a></li>
+        <li><a href="map.html">Mapa</a></li>
+        <li><a href="calendar.html" class="active">Calendario</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="dashboard.html" class="btn-ghost">Mi panel</a>
+      </div>
+    </div>
+  </nav>
+
+  <div style="padding-top:60px;max-width:1100px;margin:0 auto;padding-left:1.5rem;padding-right:1.5rem;">
+
+    <div style="padding:2rem 0 1rem;">
+      <h1 style="font-size:1.6rem;margin-bottom:0.2rem;">📅 Calendario de eventos</h1>
+      <p style="color:var(--text-muted);margin:0;">Visualiza y planea tu participación en la comunidad</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 320px;gap:1.5rem;align-items:start;" class="cal-layout">
+
+      <!-- CALENDARIO -->
+      <div class="dashboard-section">
+        <div class="dashboard-section-header">
+          <div class="calendar-header" style="width:100%;margin-bottom:0;">
+            <button class="btn-ghost" id="prevMonth" style="padding:0.4rem 0.7rem;">←</button>
+            <h2 id="calTitle" style="font-size:1.1rem;"></h2>
+            <button class="btn-ghost" id="nextMonth" style="padding:0.4rem 0.7rem;">→</button>
+          </div>
+        </div>
+        <div class="dashboard-section-body">
+          <!-- Días de la semana -->
+          <div class="calendar-grid" style="margin-bottom:0.5rem;">
+            <div class="cal-day-label">Lun</div>
+            <div class="cal-day-label">Mar</div>
+            <div class="cal-day-label">Mié</div>
+            <div class="cal-day-label">Jue</div>
+            <div class="cal-day-label">Vie</div>
+            <div class="cal-day-label">Sáb</div>
+            <div class="cal-day-label">Dom</div>
+          </div>
+          <!-- Días del mes -->
+          <div class="calendar-grid" id="calGrid"></div>
+        </div>
+      </div>
+
+      <!-- PANEL LATERAL -->
+      <div>
+        <!-- Leyenda -->
+        <div class="dashboard-section" style="margin-bottom:1rem;">
+          <div class="dashboard-section-body" style="padding:1rem;">
+            <p style="font-size:0.82rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.75rem;">Categorías</p>
+            <div style="display:flex;flex-direction:column;gap:0.4rem;">
+              <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.85rem;"><span style="width:10px;height:10px;border-radius:50%;background:var(--green-400);display:inline-block;"></span> Voluntariado</div>
+              <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.85rem;"><span style="width:10px;height:10px;border-radius:50%;background:#1D9E75;display:inline-block;"></span> Medio ambiente</div>
+              <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.85rem;"><span style="width:10px;height:10px;border-radius:50%;background:var(--blue-400);display:inline-block;"></span> Educación</div>
+              <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.85rem;"><span style="width:10px;height:10px;border-radius:50%;background:#E24B4A;display:inline-block;"></span> Salud</div>
+              <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.85rem;"><span style="width:10px;height:10px;border-radius:50%;background:#7F77DD;display:inline-block;"></span> Cultura</div>
+              <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.85rem;"><span style="width:10px;height:10px;border-radius:50%;background:var(--amber-500);display:inline-block;"></span> Derechos</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Eventos del día seleccionado -->
+        <div class="dashboard-section" id="dayPanel">
+          <div class="dashboard-section-header">
+            <h2 id="dayPanelTitle" style="font-size:0.95rem;">Selecciona un día</h2>
+          </div>
+          <div class="dashboard-section-body" id="dayEvents">
+            <p style="color:var(--text-muted);font-size:0.9rem;text-align:center;padding:1rem 0;">
+              Haz clic en un día con eventos para verlos aquí
+            </p>
+          </div>
+        </div>
+
+        <!-- Próximos eventos del mes -->
+        <div class="dashboard-section" style="margin-top:1rem;">
+          <div class="dashboard-section-header">
+            <h2 style="font-size:0.95rem;">📌 Este mes</h2>
+          </div>
+          <div class="dashboard-section-body" id="monthSummary">
+            <div class="spinner"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/main.js"></script>
+  <script type="module">
+    import { SAMPLE_EVENTS } from '../js/events.js';
+
+    const MONTHS_ES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+    const CAT_COLORS = {
+      voluntariado: '#1D9E75', medioambiente: '#0F6E56',
+      educacion: '#378ADD',   salud: '#E24B4A',
+      cultura: '#7F77DD',     derechos: '#EF9F27'
+    };
+
+    let currentYear  = new Date().getFullYear();
+    let currentMonth = new Date().getMonth();
+    let selectedDate = null;
+
+    function eventsForDate(dateStr) {
+      return SAMPLE_EVENTS.filter(ev => ev.date === dateStr);
+    }
+
+    function renderCalendar() {
+      const grid  = document.getElementById('calGrid');
+      const title = document.getElementById('calTitle');
+      title.textContent = `${MONTHS_ES[currentMonth]} ${currentYear}`;
+
+      const firstDay  = new Date(currentYear, currentMonth, 1);
+      const lastDay   = new Date(currentYear, currentMonth + 1, 0);
+      const today     = new Date().toISOString().split('T')[0];
+
+      // Día de la semana del primer día (0=dom → ajustar a lunes=0)
+      let startDow = firstDay.getDay(); // 0=dom
+      startDow = (startDow === 0) ? 6 : startDow - 1; // convertir a lunes=0
+
+      // Días del mes anterior
+      const prevMonthLast = new Date(currentYear, currentMonth, 0).getDate();
+
+      let cells = [];
+
+      // Días anteriores
+      for (let i = startDow - 1; i >= 0; i--) {
+        cells.push({ day: prevMonthLast - i, other: true, dateStr: null });
+      }
+      // Días del mes
+      for (let d = 1; d <= lastDay.getDate(); d++) {
+        const mm  = String(currentMonth + 1).padStart(2, '0');
+        const dd  = String(d).padStart(2, '0');
+        const str = `${currentYear}-${mm}-${dd}`;
+        cells.push({ day: d, other: false, dateStr: str, isToday: str === today, events: eventsForDate(str) });
+      }
+      // Días siguientes
+      const remaining = 42 - cells.length;
+      for (let d = 1; d <= remaining; d++) {
+        cells.push({ day: d, other: true, dateStr: null });
+      }
+
+      grid.innerHTML = cells.map(c => {
+        const hasEv   = !c.other && c.events?.length > 0;
+        const isToday = c.isToday;
+        const isSel   = c.dateStr === selectedDate;
+        let cls = 'cal-day';
+        if (c.other) cls += ' other-month';
+        if (isToday) cls += ' today';
+        if (hasEv)   cls += ' has-events';
+        if (isSel)   cls += ' selected-day';
+
+        const dots = hasEv
+          ? c.events.slice(0, 3).map(ev => `<div class="cal-event-dot" style="background:${CAT_COLORS[ev.category] || 'var(--green-400)'}"></div>`).join('')
+          : '';
+
+        return `<div class="${cls}" ${c.dateStr ? `data-date="${c.dateStr}"` : ''}>
+          <span class="cal-day-num">${c.day}</span>
+          ${dots}
+        </div>`;
+      }).join('');
+
+      // Click en días
+      grid.querySelectorAll('.cal-day[data-date]').forEach(el => {
+        el.addEventListener('click', () => {
+          selectedDate = el.dataset.date;
+          showDayEvents(selectedDate);
+          grid.querySelectorAll('.selected-day').forEach(d => d.classList.remove('selected-day'));
+          el.classList.add('selected-day');
+        });
+      });
+
+      // Resumen del mes
+      renderMonthSummary();
+    }
+
+    function showDayEvents(dateStr) {
+      const events = eventsForDate(dateStr);
+      const d = new Date(dateStr + 'T00:00:00');
+      const label = d.toLocaleDateString('es-MX', { weekday:'long', day:'numeric', month:'long' });
+
+      document.getElementById('dayPanelTitle').textContent = label.charAt(0).toUpperCase() + label.slice(1);
+
+      const container = document.getElementById('dayEvents');
+      if (!events.length) {
+        container.innerHTML = `<p style="color:var(--text-muted);font-size:0.88rem;text-align:center;padding:1rem 0;">Sin eventos este día.<br/><a href="events.html" style="color:var(--green-600);font-weight:500;">Explorar eventos →</a></p>`;
+        return;
+      }
+
+      container.innerHTML = events.map(ev => `
+        <div style="display:flex;align-items:flex-start;gap:0.75rem;padding:0.75rem 0;border-bottom:1px solid var(--border-light);">
+          <div style="width:10px;height:10px;border-radius:50%;background:${CAT_COLORS[ev.category]};flex-shrink:0;margin-top:5px;"></div>
+          <div style="flex:1;">
+            <strong style="font-size:0.88rem;display:block;">${ev.title}</strong>
+            <span style="font-size:0.78rem;color:var(--text-muted);">⏰ ${ev.time}${ev.endTime ? ' – ' + ev.endTime : ''}</span><br/>
+            <span style="font-size:0.78rem;color:var(--text-muted);">📍 ${ev.location}</span>
+          </div>
+          <a href="events.html" class="btn-primary btn-sm" style="flex-shrink:0;">Ver</a>
+        </div>`).join('');
+    }
+
+    function renderMonthSummary() {
+      const mm  = String(currentMonth + 1).padStart(2, '0');
+      const prefix = `${currentYear}-${mm}-`;
+      const monthEvents = SAMPLE_EVENTS.filter(ev => ev.date.startsWith(prefix))
+        .sort((a, b) => a.date.localeCompare(b.date));
+
+      const el = document.getElementById('monthSummary');
+      if (!monthEvents.length) {
+        el.innerHTML = `<p style="color:var(--text-muted);font-size:0.88rem;text-align:center;">Sin eventos este mes</p>`;
+        return;
+      }
+      el.innerHTML = monthEvents.slice(0, 6).map(ev => {
+        const d = new Date(ev.date + 'T00:00:00');
+        const dayLabel = d.toLocaleDateString('es-MX', { day:'numeric', month:'short' });
+        return `
+          <div style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0;border-bottom:1px solid var(--border-light);cursor:pointer;"
+               onclick="document.querySelector('[data-date=\\'${ev.date}\\']')?.click()">
+            <div style="width:34px;height:34px;border-radius:var(--radius-md);background:${CAT_COLORS[ev.category]};display:flex;align-items:center;justify-content:center;font-size:0.85rem;color:#fff;font-weight:700;flex-shrink:0;">${d.getDate()}</div>
+            <div style="flex:1;min-width:0;">
+              <strong style="font-size:0.83rem;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${ev.title}</strong>
+              <span style="font-size:0.76rem;color:var(--text-muted);">${dayLabel} · ${ev.time || ''}</span>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    document.getElementById('prevMonth').addEventListener('click', () => {
+      currentMonth--;
+      if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+      selectedDate = null;
+      renderCalendar();
+    });
+    document.getElementById('nextMonth').addEventListener('click', () => {
+      currentMonth++;
+      if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+      selectedDate = null;
+      renderCalendar();
+    });
+
+    renderCalendar();
+
+    // CSS extra
+    const s = document.createElement('style');
+    s.textContent = `.selected-day { background:var(--green-500) !important; color:#fff !important; border-color:var(--green-500) !important; } .selected-day .cal-day-num { color:#fff; } .calendar-header { display:flex;align-items:center;gap:1rem; }`;
+    document.head.appendChild(s);
+  </script>
+
+  <style>
+    @media (max-width: 800px) { .cal-layout { grid-template-columns: 1fr !important; } }
+  </style>
+</body>
+</html>

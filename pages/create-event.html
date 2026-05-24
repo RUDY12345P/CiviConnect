@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crear evento — CiviConnect</title>
+  <link rel="stylesheet" href="../css/main.css" />
+  <link rel="stylesheet" href="../css/app.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <nav class="navbar scrolled">
+    <div class="nav-container">
+      <a href="../index.html" class="nav-logo"><span class="logo-icon">◎</span> CiviConnect</a>
+      <div class="nav-actions">
+        <a href="organizer.html" class="btn-ghost">← Mis eventos</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="app-shell">
+    <aside class="sidebar">
+      <nav class="sidebar-nav">
+        <div class="sidebar-section-label">Organizador</div>
+        <a href="organizer.html" class="sidebar-item"><span class="sidebar-icon">🧑‍💼</span> Mis eventos</a>
+        <a href="create-event.html" class="sidebar-item active"><span class="sidebar-icon">➕</span> Crear evento</a>
+        <div class="sidebar-section-label">Ciudadano</div>
+        <a href="dashboard.html" class="sidebar-item"><span class="sidebar-icon">📊</span> Mi panel</a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:2rem;">
+        <a href="organizer.html" style="color:var(--text-muted);text-decoration:none;">← Volver</a>
+        <div>
+          <h1 style="font-size:1.6rem;margin-bottom:0.15rem;">Crear nuevo evento</h1>
+          <p style="color:var(--text-muted);margin:0;font-size:0.9rem;">Completa la información para publicar tu evento</p>
+        </div>
+      </div>
+
+      <!-- ALERT ÉXITO -->
+      <div class="alert alert-success" id="successAlert" style="display:none;">
+        🎉 ¡Evento creado exitosamente! <a href="organizer.html" style="color:var(--green-700);font-weight:600;">Ver mis eventos →</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 340px;gap:1.5rem;align-items:start;" class="create-cols">
+
+        <!-- FORMULARIO -->
+        <div class="dashboard-section">
+          <div class="dashboard-section-body">
+            <form id="createEventForm" class="create-event-form">
+
+              <div class="form-section-title">Información básica</div>
+
+              <div class="form-group">
+                <label class="form-label" for="evTitle">Título del evento *</label>
+                <input class="form-input" type="text" id="evTitle" placeholder="Ej: Limpieza del Parque Central" required maxlength="80" />
+                <span class="form-hint">Máximo 80 caracteres. Sé descriptivo y claro.</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="evCategory">Categoría *</label>
+                <select class="form-select" id="evCategory" required>
+                  <option value="">Selecciona una categoría</option>
+                  <option value="voluntariado">🌱 Voluntariado</option>
+                  <option value="medioambiente">♻️ Medio ambiente</option>
+                  <option value="educacion">📚 Educación</option>
+                  <option value="salud">❤️ Salud</option>
+                  <option value="cultura">🎨 Cultura</option>
+                  <option value="derechos">⚖️ Derechos cívicos</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="evDesc">Descripción *</label>
+                <textarea class="form-textarea" id="evDesc" rows="5"
+                  placeholder="Describe el evento: qué actividades se realizarán, qué deben llevar los participantes, etc." required></textarea>
+                <span class="form-hint">Mínimo 50 caracteres. Una buena descripción genera más inscripciones.</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="evImage">Ícono del evento</label>
+                <div class="emoji-picker" id="emojiPicker">
+                  <button type="button" class="emoji-opt selected" data-emoji="🌱">🌱</button>
+                  <button type="button" class="emoji-opt" data-emoji="♻️">♻️</button>
+                  <button type="button" class="emoji-opt" data-emoji="📚">📚</button>
+                  <button type="button" class="emoji-opt" data-emoji="❤️">❤️</button>
+                  <button type="button" class="emoji-opt" data-emoji="🎨">🎨</button>
+                  <button type="button" class="emoji-opt" data-emoji="⚖️">⚖️</button>
+                  <button type="button" class="emoji-opt" data-emoji="🌳">🌳</button>
+                  <button type="button" class="emoji-opt" data-emoji="🏥">🏥</button>
+                  <button type="button" class="emoji-opt" data-emoji="🥫">🥫</button>
+                  <button type="button" class="emoji-opt" data-emoji="🌿">🌿</button>
+                  <button type="button" class="emoji-opt" data-emoji="🎭">🎭</button>
+                  <button type="button" class="emoji-opt" data-emoji="🏫">🏫</button>
+                </div>
+                <input type="hidden" id="evImage" value="🌱" />
+              </div>
+
+              <div class="form-section-title">Fecha, hora y lugar</div>
+
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;">
+                <div class="form-group">
+                  <label class="form-label" for="evDate">Fecha *</label>
+                  <input class="form-input" type="date" id="evDate" required />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="evTime">Hora inicio *</label>
+                  <input class="form-input" type="time" id="evTime" required />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="evEndTime">Hora fin</label>
+                  <input class="form-input" type="time" id="evEndTime" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="evLocation">Dirección del evento *</label>
+                <input class="form-input" type="text" id="evLocation"
+                  placeholder="Ej: Parque Central, Col. Roma Norte, Ciudad de México" required />
+              </div>
+
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                <div class="form-group">
+                  <label class="form-label" for="evLat">Latitud (opcional)</label>
+                  <input class="form-input" type="number" id="evLat" placeholder="19.4326" step="any" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="evLng">Longitud (opcional)</label>
+                  <input class="form-input" type="number" id="evLng" placeholder="-99.1332" step="any" />
+                </div>
+              </div>
+              <span class="form-hint" style="display:block;margin-top:-0.5rem;margin-bottom:1rem;">
+                Las coordenadas permiten mostrar el evento en el mapa. Puedes obtenerlas en Google Maps.
+              </span>
+
+              <div class="form-section-title">Capacidad y puntos</div>
+
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                <div class="form-group">
+                  <label class="form-label" for="evCapacity">Capacidad máxima *</label>
+                  <input class="form-input" type="number" id="evCapacity" min="1" max="10000" placeholder="50" required />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="evPoints">Puntos por participar</label>
+                  <input class="form-input" type="number" id="evPoints" min="0" max="500" placeholder="50" value="50" />
+                  <span class="form-hint">Los participantes ganarán estos puntos al asistir.</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="evTags">Etiquetas (separadas por coma)</label>
+                <input class="form-input" type="text" id="evTags"
+                  placeholder="Ej: parques, limpieza, naturaleza, familia" />
+              </div>
+
+              <div style="display:flex;gap:0.75rem;justify-content:flex-end;padding-top:1.5rem;border-top:1px solid var(--border-light);">
+                <a href="organizer.html" class="btn-ghost">Cancelar</a>
+                <button type="submit" class="btn-primary" id="submitBtn">🚀 Publicar evento</button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+
+        <!-- PREVIEW -->
+        <div style="position:sticky;top:80px;">
+          <h3 style="font-size:0.85rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:1rem;">Vista previa</h3>
+          <div class="event-card" id="previewCard">
+            <div class="event-card-image" id="previewImg">🌱</div>
+            <div class="event-card-body">
+              <div class="event-card-meta">
+                <span class="event-tag volunteer" id="previewCat">🌱 Voluntariado</span>
+              </div>
+              <h3 class="event-card-title" id="previewTitle">Título del evento</h3>
+              <p class="event-card-desc" id="previewDesc">La descripción aparecerá aquí...</p>
+              <div class="event-card-info">
+                <div class="event-info-row"><span class="event-info-icon">📅</span><span id="previewDate">Fecha por definir</span></div>
+                <div class="event-info-row"><span class="event-info-icon">📍</span><span id="previewLoc">Lugar por definir</span></div>
+                <div class="event-info-row"><span class="event-info-icon">⭐</span><span id="previewPts">50 puntos</span></div>
+              </div>
+              <div class="event-card-footer" style="padding-top:0.75rem;border-top:1px solid var(--border-light);">
+                <span class="event-count-text">0/<span id="previewCap">50</span> inscritos</span>
+                <button class="btn-primary btn-sm" disabled>Inscribirse</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/main.js"></script>
+  <script type="module">
+    import { createEvent } from '../js/events.js';
+
+    // === EMOJI PICKER ===
+    const emojiPicker = document.getElementById('emojiPicker');
+    emojiPicker.querySelectorAll('.emoji-opt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        emojiPicker.querySelectorAll('.emoji-opt').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        document.getElementById('evImage').value = btn.dataset.emoji;
+        document.getElementById('previewImg').textContent = btn.dataset.emoji;
+      });
+    });
+
+    // === PREVIEW EN TIEMPO REAL ===
+    const catMap = {
+      voluntariado: { label:'🌱 Voluntariado', cls:'volunteer' },
+      medioambiente:{ label:'♻️ Ambiente',     cls:'env'       },
+      educacion:    { label:'📚 Educación',    cls:'education' },
+      salud:        { label:'❤️ Salud',        cls:'health'    },
+      cultura:      { label:'🎨 Cultura',      cls:'culture'   },
+      derechos:     { label:'⚖️ Derechos',     cls:'rights'    },
+    };
+
+    function updatePreview() {
+      const title    = document.getElementById('evTitle').value     || 'Título del evento';
+      const desc     = document.getElementById('evDesc').value      || 'La descripción aparecerá aquí...';
+      const date     = document.getElementById('evDate').value;
+      const time     = document.getElementById('evTime').value;
+      const location = document.getElementById('evLocation').value  || 'Lugar por definir';
+      const capacity = document.getElementById('evCapacity').value  || '50';
+      const points   = document.getElementById('evPoints').value    || '50';
+      const category = document.getElementById('evCategory').value;
+
+      document.getElementById('previewTitle').textContent = title;
+      document.getElementById('previewDesc').textContent  = desc.slice(0, 80) + (desc.length > 80 ? '…' : '');
+      document.getElementById('previewLoc').textContent   = location;
+      document.getElementById('previewCap').textContent   = capacity;
+      document.getElementById('previewPts').textContent   = `${points} puntos`;
+
+      if (date) {
+        const d = new Date(date + 'T00:00:00');
+        document.getElementById('previewDate').textContent =
+          d.toLocaleDateString('es-MX', { weekday:'short', day:'numeric', month:'short' }) +
+          (time ? ` · ${time}` : '');
+      }
+
+      if (category && catMap[category]) {
+        const c = catMap[category];
+        const catEl = document.getElementById('previewCat');
+        catEl.textContent  = c.label;
+        catEl.className    = `event-tag ${c.cls}`;
+      }
+    }
+
+    ['evTitle','evDesc','evDate','evTime','evLocation','evCapacity','evPoints','evCategory'].forEach(id => {
+      document.getElementById(id)?.addEventListener('input', updatePreview);
+      document.getElementById(id)?.addEventListener('change', updatePreview);
+    });
+
+    // Fecha mínima hoy
+    const todayStr = new Date().toISOString().split('T')[0];
+    document.getElementById('evDate').min = todayStr;
+
+    // === ENVIAR FORMULARIO ===
+    document.getElementById('createEventForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('submitBtn');
+
+      const title    = document.getElementById('evTitle').value.trim();
+      const desc     = document.getElementById('evDesc').value.trim();
+      const category = document.getElementById('evCategory').value;
+      const date     = document.getElementById('evDate').value;
+      const time     = document.getElementById('evTime').value;
+      const endTime  = document.getElementById('evEndTime').value;
+      const location = document.getElementById('evLocation').value.trim();
+      const capacity = parseInt(document.getElementById('evCapacity').value) || 50;
+      const points   = parseInt(document.getElementById('evPoints').value)   || 50;
+      const image    = document.getElementById('evImage').value;
+      const lat      = parseFloat(document.getElementById('evLat').value) || null;
+      const lng      = parseFloat(document.getElementById('evLng').value) || null;
+      const tags     = document.getElementById('evTags').value.split(',').map(t => t.trim()).filter(Boolean);
+
+      if (desc.length < 20) {
+        showToast('La descripción debe tener al menos 20 caracteres', 'warning');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = '⏳ Publicando…';
+
+      try {
+        await createEvent({ title, description: desc, category, date, time, endTime, location, maxCapacity: capacity, points, image, lat, lng, tags, status: 'active' });
+        document.getElementById('successAlert').style.display = 'flex';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        showToast('¡Evento publicado exitosamente! 🎉', 'success');
+        btn.textContent = '✅ Publicado';
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = '🚀 Publicar evento';
+        showToast('Error al crear el evento. Intenta de nuevo.', 'error');
+      }
+    });
+  </script>
+
+  <style>
+    .emoji-picker { display:flex; flex-wrap:wrap; gap:0.4rem; }
+    .emoji-opt {
+      width:38px; height:38px; font-size:1.3rem;
+      background:var(--gray-50); border:1.5px solid var(--border-light);
+      border-radius:var(--radius-md); cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+      transition:all 0.15s ease;
+    }
+    .emoji-opt:hover, .emoji-opt.selected {
+      background:var(--green-50); border-color:var(--green-400);
+      transform:scale(1.1);
+    }
+    @media (max-width:900px) {
+      .create-cols { grid-template-columns:1fr !important; }
+    }
+  </style>
+</body>
+</html>

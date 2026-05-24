@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eventos en Cancún - CiviConnect</title>
+  <link rel="stylesheet" href="../css/main.css" />
+  <link rel="stylesheet" href="../css/app.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="nav-logo">
+        <span class="logo-icon">◎</span> CiviConnect
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="events.html" class="active">Eventos</a></li>
+        <li><a href="map.html">Mapa</a></li>
+        <li><a href="calendar.html">Calendario</a></li>
+      </ul>
+      <div class="nav-actions" id="navActions">
+        <a href="login.html" class="btn-ghost">Iniciar sesión</a>
+        <a href="register.html" class="btn-primary">Registrarse</a>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+
+  <main class="events-page">
+    <section class="events-hero">
+      <div class="events-hero-inner">
+        <div class="events-hero-copy">
+          <span class="events-kicker">Agenda comunitaria de Cancún</span>
+          <h1 class="page-title">Encuentra una causa cerca de ti y participa hoy.</h1>
+          <p class="page-sub">Explora eventos reales de la ciudad: playas, parques, escuelas, cultura, salud y participación ciudadana. Filtra por categoría y elige cómo sumar.</p>
+          <div class="events-hero-actions">
+            <a href="#eventsGrid" class="btn-primary">Ver eventos</a>
+            <a href="map.html" class="btn-outline">Abrir mapa</a>
+          </div>
+        </div>
+
+        <div class="events-hero-panel" aria-label="Resumen de eventos">
+          <div class="hero-map-card">
+            <span class="hero-pin pin-one">🌊</span>
+            <span class="hero-pin pin-two">📚</span>
+            <span class="hero-pin pin-three">❤️</span>
+            <span class="hero-pin pin-four">🎭</span>
+            <div class="hero-map-label">Cancún</div>
+          </div>
+          <div class="events-stats" id="eventsStats">
+            <div><strong>0</strong><span>eventos</span></div>
+            <div><strong>0</strong><span>cupos</span></div>
+            <div><strong>0</strong><span>puntos</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="events-discovery">
+      <div class="events-header">
+        <div class="events-header-inner">
+          <div>
+            <h2 class="events-section-title">Eventos destacados</h2>
+            <p class="page-sub">Todos los eventos están ubicados en la Ciudad de Cancún.</p>
+          </div>
+          <div class="events-search-bar">
+            <span class="search-icon">⌕</span>
+            <input type="search" id="searchInput" placeholder="Buscar por evento, lugar, organizador o causa" class="search-input" />
+          </div>
+        </div>
+      </div>
+
+      <div class="category-strip" id="categoryFilter" aria-label="Filtrar por categoría">
+        <button class="category-chip active" data-value="all" type="button">
+          <span>✨</span><strong>Todas</strong><small id="count-all">0</small>
+        </button>
+        <button class="category-chip" data-value="voluntariado" type="button">
+          <span>🌱</span><strong>Voluntariado</strong><small id="count-voluntariado">0</small>
+        </button>
+        <button class="category-chip" data-value="medioambiente" type="button">
+          <span>♻️</span><strong>Medio ambiente</strong><small id="count-medioambiente">0</small>
+        </button>
+        <button class="category-chip" data-value="educacion" type="button">
+          <span>📚</span><strong>Educación</strong><small id="count-educacion">0</small>
+        </button>
+        <button class="category-chip" data-value="salud" type="button">
+          <span>❤️</span><strong>Salud</strong><small id="count-salud">0</small>
+        </button>
+        <button class="category-chip" data-value="cultura" type="button">
+          <span>🎨</span><strong>Cultura</strong><small id="count-cultura">0</small>
+        </button>
+        <button class="category-chip" data-value="derechos" type="button">
+          <span>⚖️</span><strong>Derechos</strong><small id="count-derechos">0</small>
+        </button>
+      </div>
+
+      <div class="events-layout">
+        <aside class="filters-sidebar">
+          <div class="filter-section">
+            <h3 class="filter-title">Ordenar por</h3>
+            <select class="form-select" id="sortSelect">
+              <option value="date">Fecha más próxima</option>
+              <option value="enrolled">Más populares</option>
+              <option value="points">Más puntos</option>
+              <option value="capacity">Más cupo disponible</option>
+            </select>
+          </div>
+          <div class="filter-section">
+            <h3 class="filter-title">Disponibilidad</h3>
+            <label class="filter-opt checkbox-opt">
+              <input type="checkbox" id="filterAvailable" />
+              <span>Solo con cupo disponible</span>
+            </label>
+          </div>
+          <div class="filter-section">
+            <h3 class="filter-title">Guía rápida</h3>
+            <div class="filter-help">
+              <span>1. Elige categoría</span>
+              <span>2. Revisa impacto y cupo</span>
+              <span>3. Abre el detalle e inscríbete</span>
+            </div>
+          </div>
+        </aside>
+
+        <section class="events-main">
+          <div class="events-toolbar">
+            <span class="events-count" id="eventsCount">Cargando...</span>
+            <div class="view-toggle" aria-label="Cambiar vista">
+              <button class="view-btn active" id="gridView" title="Cuadrícula" type="button">▦</button>
+              <button class="view-btn" id="listView" title="Lista" type="button">☰</button>
+            </div>
+          </div>
+
+          <div class="events-grid" id="eventsGrid">
+            <div class="loading-state">
+              <div class="spinner"></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal-overlay" id="eventModal">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <div>
+          <div id="modalCategory"></div>
+          <h2 id="modalTitle" style="margin-top:0.4rem;"></h2>
+        </div>
+        <button class="modal-close" id="closeModal" aria-label="Cerrar">×</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <script src="../js/main.js"></script>
+  <script type="module">
+    import { enrollInEvent, SAMPLE_EVENTS, EVENT_CATEGORY_META } from '../js/events.js';
+
+    let allEvents = [];
+    let filtered = [];
+    let currentCategory = 'all';
+    let currentSearch = '';
+    let currentSort = 'date';
+    let filterAvail = false;
+    let isGrid = true;
+
+    const grid = document.getElementById('eventsGrid');
+    const countEl = document.getElementById('eventsCount');
+    const searchInp = document.getElementById('searchInput');
+    const sortSel = document.getElementById('sortSelect');
+    const availChk = document.getElementById('filterAvailable');
+    const modal = document.getElementById('eventModal');
+    const closeModal = document.getElementById('closeModal');
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const catParam = urlParams.get('cat');
+    if (catParam && (catParam === 'all' || EVENT_CATEGORY_META[catParam])) {
+      currentCategory = catParam;
+    }
+
+    function loadEvents() {
+      allEvents = [...SAMPLE_EVENTS];
+      allEvents = allEvents.filter(ev => normalizeText(ev.city || ev.location).includes('cancun'));
+      setActiveCategory(currentCategory);
+      renderCategoryCounts();
+      renderStats();
+      applyFilters();
+    }
+
+    function applyFilters() {
+      filtered = allEvents.filter(ev => {
+        const haystack = [
+          ev.title,
+          ev.description,
+          ev.location,
+          ev.organizer,
+          ev.impact,
+          ...(ev.tags || [])
+        ].map(normalizeText).join(' ');
+
+        const matchCat = currentCategory === 'all' || ev.category === currentCategory;
+        const matchSearch = !currentSearch || haystack.includes(normalizeText(currentSearch));
+        const matchAvail = !filterAvail || ev.enrolled < ev.maxCapacity;
+        return matchCat && matchSearch && matchAvail;
+      });
+
+      if (currentSort === 'date') filtered.sort((a, b) => new Date(a.date) - new Date(b.date));
+      if (currentSort === 'enrolled') filtered.sort((a, b) => (b.enrolled || 0) - (a.enrolled || 0));
+      if (currentSort === 'points') filtered.sort((a, b) => (b.points || 0) - (a.points || 0));
+      if (currentSort === 'capacity') filtered.sort((a, b) => availableSeats(b) - availableSeats(a));
+
+      renderEvents();
+    }
+
+    function renderEvents() {
+      countEl.textContent = `${filtered.length} evento${filtered.length !== 1 ? 's' : ''} en Cancún`;
+
+      if (!filtered.length) {
+        grid.className = isGrid ? 'events-grid' : 'events-list';
+        grid.innerHTML = `
+          <div class="empty-state" style="grid-column:1/-1;">
+            <div style="font-size:3rem;margin-bottom:1rem;">⌕</div>
+            <h3>Sin resultados</h3>
+            <p>Prueba con otra categoría, busca "playa", "salud", "Tajamar" o desactiva el filtro de cupo.</p>
+          </div>`;
+        return;
+      }
+
+      grid.className = isGrid ? 'events-grid' : 'events-list';
+      grid.innerHTML = filtered.map(renderCard).join('');
+
+      grid.querySelectorAll('[data-event-id]').forEach(card => {
+        card.addEventListener('click', (e) => {
+          if (!e.target.closest('.btn-enroll')) openModal(card.dataset.eventId);
+        });
+      });
+
+      grid.querySelectorAll('.btn-enroll').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          await handleEnroll(btn, btn.dataset.id);
+        });
+      });
+    }
+
+    function renderCard(ev) {
+      const pct = Math.min(100, Math.round((ev.enrolled / ev.maxCapacity) * 100));
+      const avail = ev.enrolled < ev.maxCapacity;
+      const dateStr = formatEventDate(ev.date, { weekday: 'short', day: 'numeric', month: 'short' });
+      const meta = getCategoryMeta(ev.category);
+
+      return `
+      <article class="event-card featured-event-card" data-event-id="${ev.id}">
+        <div class="event-card-image event-visual ${meta.className}">
+          <span class="event-visual-emoji">${ev.image || meta.icon}</span>
+          <span class="event-visual-city">Cancún</span>
+        </div>
+        <div class="event-card-body">
+          <div class="event-card-meta">
+            <span class="event-tag ${meta.className}">${meta.icon} ${meta.shortLabel}</span>
+            <span class="event-difficulty">${ev.difficulty || 'Abierto'}</span>
+            ${!avail ? '<span class="badge badge-gray">Sin cupo</span>' : ''}
+          </div>
+          <h3 class="event-card-title">${ev.title}</h3>
+          <p class="event-card-desc">${ev.description}</p>
+          <div class="event-impact">${ev.impact || 'Impacto comunitario en Cancún'}</div>
+          <div class="event-card-info">
+            <div class="event-info-row"><span class="event-info-icon">📅</span>${dateStr} · ${ev.time || ''}</div>
+            <div class="event-info-row"><span class="event-info-icon">📍</span>${ev.location}</div>
+            <div class="event-info-row"><span class="event-info-icon">⭐</span>${ev.points || 0} puntos de participación</div>
+          </div>
+          <div class="capacity-bar" aria-label="Capacidad ocupada">
+            <div class="capacity-fill" style="width:${pct}%;background:${meta.color};"></div>
+          </div>
+          <div class="event-card-footer">
+            <span class="event-count-text">${availableSeats(ev)} cupos libres</span>
+            <button class="btn-primary btn-sm btn-enroll" data-id="${ev.id}" ${!avail ? 'disabled' : ''}>${avail ? 'Inscribirse' : 'Completo'}</button>
+          </div>
+        </div>
+      </article>`;
+    }
+
+    function openModal(id) {
+      const ev = filtered.find(e => e.id === id) || allEvents.find(e => e.id === id);
+      if (!ev) return;
+
+      const pct = Math.min(100, Math.round((ev.enrolled / ev.maxCapacity) * 100));
+      const dateStr = formatEventDate(ev.date, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+      const meta = getCategoryMeta(ev.category);
+
+      document.getElementById('modalCategory').innerHTML = `<span class="event-tag ${meta.className}">${meta.icon} ${meta.label}</span>`;
+      document.getElementById('modalTitle').textContent = ev.title;
+      document.getElementById('modalBody').innerHTML = `
+        <div class="modal-event-image event-visual ${meta.className}">
+          <span class="event-visual-emoji">${ev.image || meta.icon}</span>
+          <span class="event-visual-city">Cancún</span>
+        </div>
+        <p style="margin:1.25rem 0;">${ev.description}</p>
+        <div class="modal-impact">
+          <strong>Impacto esperado</strong>
+          <span>${ev.impact || 'Acción directa para la comunidad de Cancún'}</span>
+        </div>
+        <div class="modal-info-grid">
+          <div class="modal-info-item"><span class="modal-info-icon">📅</span><div><strong>Fecha</strong><span>${dateStr}</span></div></div>
+          <div class="modal-info-item"><span class="modal-info-icon">⏰</span><div><strong>Horario</strong><span>${ev.time || ''}${ev.endTime ? ' - ' + ev.endTime : ''}</span></div></div>
+          <div class="modal-info-item"><span class="modal-info-icon">📍</span><div><strong>Lugar</strong><span>${ev.location}</span></div></div>
+          <div class="modal-info-item"><span class="modal-info-icon">👥</span><div><strong>Organizador</strong><span>${ev.organizer}</span></div></div>
+          <div class="modal-info-item"><span class="modal-info-icon">⭐</span><div><strong>Puntos</strong><span>${ev.points || 0} puntos al participar</span></div></div>
+          <div class="modal-info-item"><span class="modal-info-icon">🎟️</span><div><strong>Capacidad</strong><span>${ev.enrolled}/${ev.maxCapacity} inscritos (${pct}%)</span></div></div>
+        </div>
+        ${(ev.tags || []).length ? `<div class="modal-tags">${ev.tags.map(t => `<span class="tag-pill">#${t}</span>`).join('')}</div>` : ''}
+        <div class="modal-footer-actions">
+          <button class="btn-primary btn-enroll-modal" data-id="${ev.id}" ${ev.enrolled >= ev.maxCapacity ? 'disabled' : ''}>
+            ${ev.enrolled >= ev.maxCapacity ? 'Sin cupo disponible' : 'Inscribirme a este evento'}
+          </button>
+          <a href="calendar.html" class="btn-outline">Ver calendario</a>
+        </div>`;
+
+      modal.classList.add('open');
+
+      document.querySelector('.btn-enroll-modal')?.addEventListener('click', async (e) => {
+        await handleEnroll(e.currentTarget, ev.id, true);
+      });
+    }
+
+    async function handleEnroll(btn, id, fromModal = false) {
+      const ev = allEvents.find(item => item.id === id);
+      if (!ev || ev.enrolled >= ev.maxCapacity) return;
+
+      btn.disabled = true;
+      btn.textContent = 'Inscribiendo...';
+      try {
+        await enrollInEvent(id);
+        ev.enrolled = Math.min(ev.maxCapacity, ev.enrolled + 1);
+        btn.textContent = 'Inscrito';
+        showToast('Inscripción exitosa. Revisa tu panel.', 'success');
+        renderStats();
+        applyFilters();
+        if (fromModal) modal.classList.remove('open');
+      } catch (_) {
+        btn.disabled = false;
+        btn.textContent = fromModal ? 'Inscribirme a este evento' : 'Inscribirse';
+        showToast('Inicia sesión para inscribirte', 'info');
+      }
+    }
+
+    function renderCategoryCounts() {
+      const counts = allEvents.reduce((acc, ev) => {
+        acc[ev.category] = (acc[ev.category] || 0) + 1;
+        return acc;
+      }, {});
+
+      document.getElementById('count-all').textContent = allEvents.length;
+      Object.keys(EVENT_CATEGORY_META).forEach(cat => {
+        const el = document.getElementById(`count-${cat}`);
+        if (el) el.textContent = counts[cat] || 0;
+      });
+    }
+
+    function renderStats() {
+      const totalSeats = allEvents.reduce((sum, ev) => sum + availableSeats(ev), 0);
+      const totalPoints = allEvents.reduce((sum, ev) => sum + (ev.points || 0), 0);
+      document.getElementById('eventsStats').innerHTML = `
+        <div><strong>${allEvents.length}</strong><span>eventos</span></div>
+        <div><strong>${totalSeats}</strong><span>cupos</span></div>
+        <div><strong>${totalPoints}</strong><span>puntos</span></div>`;
+    }
+
+    function setActiveCategory(value) {
+      currentCategory = value;
+      document.querySelectorAll('.category-chip').forEach(chip => {
+        chip.classList.toggle('active', chip.dataset.value === currentCategory);
+      });
+    }
+
+    function getCategoryMeta(cat) {
+      return EVENT_CATEGORY_META[cat] || {
+        label: cat || 'Evento',
+        shortLabel: cat || 'Evento',
+        icon: '✨',
+        className: 'volunteer',
+        color: '#1D9E75'
+      };
+    }
+
+    function availableSeats(ev) {
+      return Math.max(0, (ev.maxCapacity || 0) - (ev.enrolled || 0));
+    }
+
+    function normalizeText(value = '') {
+      return String(value).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    }
+
+    function formatEventDate(date, opts) {
+      return new Date(date + 'T00:00:00').toLocaleDateString('es-MX', opts);
+    }
+
+    closeModal?.addEventListener('click', () => modal.classList.remove('open'));
+    modal?.addEventListener('click', (e) => {
+      if (e.target === modal) modal.classList.remove('open');
+    });
+
+    searchInp?.addEventListener('input', (e) => {
+      currentSearch = e.target.value.trim();
+      applyFilters();
+    });
+
+    document.getElementById('categoryFilter')?.addEventListener('click', (e) => {
+      const chip = e.target.closest('.category-chip');
+      if (!chip) return;
+      setActiveCategory(chip.dataset.value);
+      applyFilters();
+    });
+
+    sortSel?.addEventListener('change', (e) => {
+      currentSort = e.target.value;
+      applyFilters();
+    });
+
+    availChk?.addEventListener('change', (e) => {
+      filterAvail = e.target.checked;
+      applyFilters();
+    });
+
+    document.getElementById('gridView')?.addEventListener('click', function() {
+      isGrid = true;
+      this.classList.add('active');
+      document.getElementById('listView').classList.remove('active');
+      renderEvents();
+    });
+
+    document.getElementById('listView')?.addEventListener('click', function() {
+      isGrid = false;
+      this.classList.add('active');
+      document.getElementById('gridView').classList.remove('active');
+      renderEvents();
+    });
+
+    loadEvents();
+  </script>
+</body>
+</html>

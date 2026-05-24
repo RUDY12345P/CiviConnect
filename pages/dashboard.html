@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mi panel — CiviConnect</title>
+  <link rel="stylesheet" href="../css/main.css" />
+  <link rel="stylesheet" href="../css/app.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="nav-logo"><span class="logo-icon">◎</span> CiviConnect</a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="events.html">Eventos</a></li>
+        <li><a href="map.html">Mapa</a></li>
+        <li><a href="calendar.html">Calendario</a></li>
+      </ul>
+      <div class="nav-actions">
+        <span id="userNameNav" style="font-size:0.88rem;color:var(--text-secondary);"></span>
+        <button onclick="logoutUser()" class="btn-ghost">Cerrar sesión</button>
+      </div>
+      <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+
+  <div class="app-shell">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <nav class="sidebar-nav">
+        <div class="sidebar-section-label">Principal</div>
+        <a href="dashboard.html" class="sidebar-item active">
+          <span class="sidebar-icon">📊</span> Mi panel
+        </a>
+        <a href="events.html" class="sidebar-item">
+          <span class="sidebar-icon">🗺️</span> Explorar eventos
+        </a>
+        <a href="calendar.html" class="sidebar-item">
+          <span class="sidebar-icon">📅</span> Calendario
+        </a>
+        <a href="map.html" class="sidebar-item">
+          <span class="sidebar-icon">📍</span> Mapa
+        </a>
+        <div class="sidebar-section-label">Mi cuenta</div>
+        <a href="#historial" class="sidebar-item">
+          <span class="sidebar-icon">📋</span> Historial
+        </a>
+        <a href="#puntos" class="sidebar-item">
+          <span class="sidebar-icon">⭐</span> Mis puntos
+        </a>
+        <a href="organizer.html" class="sidebar-item">
+          <span class="sidebar-icon">🧑‍💼</span> Panel organizador
+        </a>
+        <div style="margin-top:auto;padding:1.5rem;">
+          <button onclick="logoutUser()" class="btn-ghost" style="width:100%;justify-content:center;">
+            🚪 Cerrar sesión
+          </button>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+      <div class="dashboard-header">
+        <h1 id="welcomeMsg">Hola 👋</h1>
+        <p style="color:var(--text-muted);margin:0;">Aquí puedes ver tu actividad y próximos eventos</p>
+      </div>
+
+      <!-- STATS -->
+      <div class="stats-row" id="statsRow">
+        <div class="stat-card stat-card-accent">
+          <span class="stat-card-icon">⭐</span>
+          <span class="stat-card-value" id="statPoints">0</span>
+          <span class="stat-card-label">Puntos acumulados</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-card-icon">✅</span>
+          <span class="stat-card-value" id="statEvents">0</span>
+          <span class="stat-card-label">Eventos asistidos</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-card-icon">🏅</span>
+          <span class="stat-card-value" id="statLevel">Bronce</span>
+          <span class="stat-card-label">Nivel de participación</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-card-icon">📅</span>
+          <span class="stat-card-value" id="statUpcoming">0</span>
+          <span class="stat-card-label">Próximos eventos</span>
+        </div>
+      </div>
+
+      <!-- BARRA DE NIVEL -->
+      <div class="points-level" id="puntos">
+        <div class="points-level-header">
+          <div>
+            <strong style="font-size:0.95rem;" id="levelName">Ciudadano Bronce</strong>
+            <p style="font-size:0.8rem;color:var(--text-muted);margin:0;" id="levelMsg">Sigue participando para subir de nivel</p>
+          </div>
+          <span style="font-family:var(--font-display);font-weight:700;color:var(--green-600);" id="levelPct">0%</span>
+        </div>
+        <div class="points-level-bar">
+          <div class="points-level-fill" id="levelBar" style="width:0%"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:0.5rem;font-size:0.78rem;color:var(--text-muted);">
+          <span>Bronce · 0 pts</span>
+          <span>Plata · 200 pts</span>
+          <span>Oro · 500 pts</span>
+          <span>Diamante · 1000 pts</span>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem;" class="dash-cols">
+
+        <!-- PRÓXIMOS EVENTOS -->
+        <div class="dashboard-section">
+          <div class="dashboard-section-header">
+            <h2>📅 Mis próximos eventos</h2>
+            <a href="events.html" class="btn-ghost" style="font-size:0.82rem;">Ver todos</a>
+          </div>
+          <div class="dashboard-section-body" id="upcomingEvents">
+            <div class="spinner"></div>
+          </div>
+        </div>
+
+        <!-- ACTIVIDAD RECIENTE -->
+        <div class="dashboard-section" id="historial">
+          <div class="dashboard-section-header">
+            <h2>🏆 Actividad reciente</h2>
+          </div>
+          <div class="dashboard-section-body" id="recentActivity">
+            <div class="spinner"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- EVENTOS RECOMENDADOS -->
+      <div class="dashboard-section">
+        <div class="dashboard-section-header">
+          <h2>🌟 Eventos recomendados</h2>
+          <a href="events.html" class="btn-ghost" style="font-size:0.82rem;">Ver más</a>
+        </div>
+        <div class="dashboard-section-body">
+          <div class="events-grid" id="recommendedEvents" style="grid-template-columns:repeat(auto-fill,minmax(240px,1fr));">
+            <div class="spinner"></div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="../js/main.js"></script>
+  <script type="module">
+    import { SAMPLE_EVENTS, enrollInEvent } from '../js/events.js';
+
+    // === SIMULAR DATOS DE USUARIO (demo sin Firebase) ===
+    const demoUser = {
+      name:         'Ciudadano Demo',
+      points:       175,
+      eventsJoined: ['ev001', 'ev003', 'ev004'],
+      role:         'citizen'
+    };
+
+    // Intentar obtener usuario de Firebase Auth
+    async function initDashboard() {
+      let user = demoUser;
+
+      try {
+        const { getAuth, onAuthStateChanged } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js");
+        const auth = getAuth();
+        onAuthStateChanged(auth, async (fbUser) => {
+          if (fbUser) {
+            user = { ...demoUser, name: fbUser.displayName || fbUser.email.split('@')[0] };
+          }
+          renderDashboard(user);
+        });
+      } catch (_) {
+        renderDashboard(user);
+      }
+    }
+
+    function renderDashboard(user) {
+      // Welcome
+      document.getElementById('welcomeMsg').textContent = `Hola, ${user.name.split(' ')[0]} 👋`;
+      document.getElementById('userNameNav').textContent = user.name;
+
+      // Stats
+      document.getElementById('statPoints').textContent = user.points;
+      document.getElementById('statEvents').textContent = user.eventsJoined.length;
+
+      // Nivel
+      const levels = [
+        { name:'Ciudadano Bronce', min:0,   max:200,  msg:'Completa 3 eventos más para subir a Plata' },
+        { name:'Ciudadano Plata',  min:200, max:500,  msg:'¡Ya casi llegas a Oro! Sigue así' },
+        { name:'Ciudadano Oro',    min:500, max:1000, msg:'¡Excelente! Camino al nivel Diamante' },
+        { name:'Ciudadano Diamante', min:1000, max:2000, msg:'¡Eres un referente en tu comunidad!' },
+      ];
+      const lvl = levels.find(l => user.points < l.max) || levels[3];
+      const pct = Math.min(100, Math.round(((user.points - lvl.min) / (lvl.max - lvl.min)) * 100));
+      document.getElementById('levelName').textContent = lvl.name;
+      document.getElementById('levelMsg').textContent  = lvl.msg;
+      document.getElementById('levelPct').textContent  = `${pct}%`;
+      document.getElementById('statLevel').textContent = lvl.name.split(' ').pop();
+      setTimeout(() => { document.getElementById('levelBar').style.width = pct + '%'; }, 100);
+
+      // Próximos eventos
+      const myEvents = SAMPLE_EVENTS.filter(e => user.eventsJoined.includes(e.id));
+      const upcoming = SAMPLE_EVENTS.filter(e => !user.eventsJoined.includes(e.id)).slice(0, 3);
+      document.getElementById('statUpcoming').textContent = myEvents.length;
+
+      const upEl = document.getElementById('upcomingEvents');
+      if (myEvents.length) {
+        upEl.innerHTML = myEvents.map(ev => `
+          <div class="activity-item">
+            <div class="activity-icon">${ev.image}</div>
+            <div class="activity-text">
+              <strong>${ev.title}</strong>
+              <span>📅 ${ev.date} · ${ev.time} · ${ev.location}</span>
+            </div>
+            <span class="badge badge-green">Inscrito</span>
+          </div>`).join('');
+      } else {
+        upEl.innerHTML = `<div class="empty-state" style="padding:1.5rem;"><p>No estás inscrito a ningún evento próximo.<br/><a href="events.html" style="color:var(--green-600);font-weight:500;">Explorar eventos →</a></p></div>`;
+      }
+
+      // Actividad reciente (simulada)
+      const activities = [
+        { icon:'🌱', title:'Inscripción: Limpieza del Parque',    date:'Hace 2 días',   pts:'+50 pts' },
+        { icon:'✅', title:'Asististe: Donación de Alimentos',    date:'Hace 1 semana', pts:'+60 pts' },
+        { icon:'⭐', title:'Logro: Primer evento completado',      date:'Hace 1 semana', pts:'+20 pts' },
+        { icon:'❤️', title:'Inscripción: Brigada de Salud',        date:'Hace 2 semanas',pts:'+55 pts' },
+      ];
+      document.getElementById('recentActivity').innerHTML = activities.map(a => `
+        <div class="activity-item">
+          <div class="activity-icon">${a.icon}</div>
+          <div class="activity-text">
+            <strong>${a.title}</strong>
+            <span>${a.date}</span>
+          </div>
+          <span class="activity-points">${a.pts}</span>
+        </div>`).join('');
+
+      // Recomendados
+      const recEl = document.getElementById('recommendedEvents');
+      recEl.innerHTML = upcoming.map(ev => {
+        const catMap = { voluntariado:'volunteer', medioambiente:'env', educacion:'education', salud:'health', cultura:'culture', derechos:'rights' };
+        const tagClass = catMap[ev.category] || 'volunteer';
+        return `
+        <article class="event-card">
+          <div class="event-card-image">${ev.image}</div>
+          <div class="event-card-body">
+            <div class="event-card-meta">
+              <span class="event-tag ${tagClass}">${getCatLabel(ev.category)}</span>
+            </div>
+            <h3 class="event-card-title">${ev.title}</h3>
+            <div class="event-card-info">
+              <div class="event-info-row"><span class="event-info-icon">📅</span>${ev.date}</div>
+              <div class="event-info-row"><span class="event-info-icon">📍</span>${ev.location}</div>
+            </div>
+            <div class="event-card-footer">
+              <span class="event-count-text">⭐ ${ev.points} pts</span>
+              <button class="btn-primary btn-sm btn-enroll" data-id="${ev.id}">Inscribirse</button>
+            </div>
+          </div>
+        </article>`;
+      }).join('');
+
+      // Botones inscripción
+      document.querySelectorAll('.btn-enroll').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          btn.disabled = true; btn.textContent = 'Inscribiendo…';
+          try {
+            await enrollInEvent(btn.dataset.id);
+            btn.textContent = '✅ Inscrito';
+            btn.style.background = 'var(--green-50)'; btn.style.color = 'var(--green-600)';
+            showToast('¡Inscripción exitosa!', 'success');
+          } catch(_) {
+            btn.disabled = false; btn.textContent = 'Inscribirse';
+            showToast('Error al inscribirse', 'error');
+          }
+        });
+      });
+    }
+
+    function getCatLabel(cat) {
+      const map = { voluntariado:'🌱 Voluntariado', medioambiente:'♻️ Ambiente', educacion:'📚 Educación', salud:'❤️ Salud', cultura:'🎨 Cultura', derechos:'⚖️ Derechos' };
+      return map[cat] || cat;
+    }
+
+    window.logoutUser = async function() {
+      try {
+        const { getAuth, signOut } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js");
+        await signOut(getAuth());
+      } catch(_) {}
+      window.location.href = '../index.html';
+    };
+
+    initDashboard();
+  </script>
+
+  <style>
+    @media (max-width: 900px) {
+      .dash-cols { grid-template-columns: 1fr !important; }
+    }
+  </style>
+</body>
+</html>
