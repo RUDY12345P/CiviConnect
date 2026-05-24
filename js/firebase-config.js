@@ -32,4 +32,3 @@ export { app, auth, db, onAuthStateChanged };
 window.firebaseApp  = app;
 window.firebaseAuth = auth;
 window.firebaseDb   = db;
-
