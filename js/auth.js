@@ -4,7 +4,6 @@
 // =============================================
 
 import {
-  getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
@@ -16,17 +15,20 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 import {
-  getFirestore,
   doc,
   setDoc,
   getDoc,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+import { auth, db } from './firebase-config.js';
+
 // Inicializar instancias (asume que firebase-config.js ya corrió)
-const auth     = getAuth();
-const db       = getFirestore();
 const provider = new GoogleAuthProvider();
+
+function goToPage(page) {
+  window.location.href = new URL(page, window.location.href).href;
+}
 
 /* =========================================
    REGISTRO DE NUEVO USUARIO
@@ -90,7 +92,7 @@ export async function loginWithGoogle() {
    ========================================= */
 export async function logout() {
   await signOut(auth);
-  window.location.href = '/index.html';
+  goToPage('../index.html');
 }
 
 /* =========================================
@@ -118,12 +120,12 @@ export function watchAuth(callback) {
 /* =========================================
    GUARD: redirige si no está autenticado
    ========================================= */
-export function requireAuth(redirectTo = '/pages/login.html') {
+export function requireAuth(redirectTo = 'login.html') {
   return new Promise((resolve) => {
     const unsub = onAuthStateChanged(auth, (user) => {
       unsub();
       if (!user) {
-        window.location.href = redirectTo;
+        goToPage(redirectTo);
       } else {
         resolve(user);
       }
@@ -134,12 +136,12 @@ export function requireAuth(redirectTo = '/pages/login.html') {
 /* =========================================
    GUARD: redirige si ya está autenticado
    ========================================= */
-export function redirectIfAuth(redirectTo = '/pages/dashboard.html') {
+export function redirectIfAuth(redirectTo = 'dashboard.html') {
   return new Promise((resolve) => {
     const unsub = onAuthStateChanged(auth, (user) => {
       unsub();
       if (user) {
-        window.location.href = redirectTo;
+        goToPage(redirectTo);
       } else {
         resolve(null);
       }
@@ -183,7 +185,7 @@ if (registerForm) {
     try {
       await registerUser({ name, email, password, role });
       showToast('¡Cuenta creada exitosamente! Bienvenid@ 🎉', 'success');
-      setTimeout(() => { window.location.href = '/pages/dashboard.html'; }, 1200);
+      setTimeout(() => { goToPage('dashboard.html'); }, 1200);
     } catch (err) {
       btn.disabled = false;
       btn.textContent = 'Crear cuenta';
@@ -217,7 +219,7 @@ if (loginForm) {
 
     try {
       await loginUser(email, password);
-      window.location.href = '/pages/dashboard.html';
+      goToPage('dashboard.html');
     } catch (err) {
       btn.disabled = false;
       btn.textContent = 'Iniciar sesión';
@@ -269,7 +271,7 @@ if (googleBtn) {
   googleBtn.addEventListener('click', async () => {
     try {
       await loginWithGoogle();
-      window.location.href = '/pages/dashboard.html';
+      goToPage('dashboard.html');
     } catch (err) {
       showToast('Error al iniciar sesión con Google.', 'error');
     }
